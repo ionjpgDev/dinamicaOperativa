@@ -1,0 +1,196 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Resumen - Optimización de Servidores Gaming">
+  <div class="resumen-card">
+    <h2>📊 OPTIMIZACIÓN DE TRÁFICO EN SERVIDORES GAMING</h2>
+    <p class="subtitle">Modelo de Transporte - INF 243 Investigación Operativa</p>
+
+    <div class="seccion">
+      <h3>🎯 Problema</h3>
+      <p>Una empresa de videojuegos dispone de <strong>3 servidores</strong> (A, B, C) con capacidades limitadas, y debe atender la demanda de <strong>3 regiones</strong> (La Paz, Cochabamba, Santa Cruz). Se busca minimizar la latencia total de conexión asignando los usuarios a los servidores más cercanos.</p>
+    </div>
+
+    <div class="seccion">
+      <h3>📦 Oferta (Capacidad de servidores)</h3>
+      <table class="tabla-datos">
+        <thead>
+          <tr><th>Servidor</th><th>Capacidad (usuarios)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>A</td><td>500</td></tr>
+          <tr><td>B</td><td>700</td></tr>
+          <tr><td>C</td><td>800</td></tr>
+          <tr class="total"><td>Total</td><td>2000</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="seccion">
+      <h3>📍 Demanda (Usuarios por región)</h3>
+      <table class="tabla-datos">
+        <thead>
+          <tr><th>Región</th><th>Demanda</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>La Paz</td><td>600</td></tr>
+          <tr><td>Cochabamba</td><td>700</td></tr>
+          <tr><td>Santa Cruz</td><td>700</td></tr>
+          <tr class="total"><td>Total</td><td>2000</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="seccion">
+      <h3>⚡ Matriz de costos (latencia en ms)</h3>
+      <table class="tabla-costos">
+        <thead>
+          <tr><th>Servidor \ Región</th><th>La Paz</th><th>Cochabamba</th><th>Santa Cruz</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>A</td><td>20</td><td>25</td><td>30</td></tr>
+          <tr><td>B</td><td>15</td><td>20</td><td>35</td></tr>
+          <tr><td>C</td><td>30</td><td>15</td><td>10</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="seccion">
+      <h3>🧠 Solución óptima (Management Scientist)</h3>
+      <table class="tabla-solucion">
+        <thead>
+          <tr><th>Origen</th><th>La Paz</th><th>Cochabamba</th><th>Santa Cruz</th><th>Oferta</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Servidor A</td><td>500</td><td>0</td><td>0</td><td>500</td></tr>
+          <tr><td>Servidor B</td><td>100</td><td>600</td><td>0</td><td>700</td></tr>
+          <tr><td>Servidor C</td><td>0</td><td>100</td><td>700</td><td>800</td></tr>
+          <tr class="destacado"><td>Demanda</td><td>600</td><td>700</td><td>700</td><td>2000</td></tr>
+        </tbody>
+      </table>
+      <p class="costo-total">💰 <strong>Costo total mínimo (latencia): 32 000 unidades</strong></p>
+    </div>
+
+    <div class="seccion">
+      <h3>📌 Interpretación</h3>
+      <ul>
+        <li>✅ La mayor parte de la demanda se asigna al servidor con menor latencia para cada región.</li>
+        <li>✅ El servidor A atiende completamente a La Paz (500 usuarios) y los 100 restantes de La Paz provienen del servidor B.</li>
+        <li>✅ Cochabamba es atendida principalmente por B (600) y complementada por C (100).</li>
+        <li>✅ Santa Cruz es servida íntegramente por C (700), que es su mejor opción (latencia 10 ms).</li>
+        <li>✅ Se utiliza el 100% de la capacidad de los servidores y se satisface toda la demanda.</li>
+        <li>✅ Comparado con una distribución no optimizada, esta solución reduce significativamente la latencia total.</li>
+      </ul>
+    </div>
+
+    <div class="seccion">
+      <h3>🎮 Beneficios de la optimización</h3>
+      <ul>
+        <li>⚡ Disminución de la latencia media de conexión.</li>
+        <li>📈 Mejora de la estabilidad y fluidez del juego.</li>
+        <li>🖥️ Uso eficiente de los servidores, evitando sobrecargas.</li>
+        <li>💸 Reducción de costos operativos al aprovechar mejor los recursos.</li>
+        <li>😃 Mayor satisfacción de los jugadores.</li>
+      </ul>
+    </div>
+
+    <div class="volver">
+      <a href="/dinamicaOperativa/" class="btn-neon">← VOLVER AL INICIO</a>
+    </div>
+  </div>
+
+  <style>
+    .resumen-card {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(10,20,30,0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 28px;
+      padding: 2rem;
+      border: 1px solid #0ff;
+      box-shadow: 0 0 25px rgba(0,255,255,0.3);
+    }
+    h2 {
+      text-align: center;
+      color: #0ff;
+      font-family: monospace;
+      text-shadow: 0 0 5px cyan;
+      margin-bottom: 0.3rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #f0f;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+    .seccion {
+      margin-bottom: 2rem;
+      border-left: 3px solid #0ff;
+      padding-left: 1rem;
+    }
+    .seccion h3 {
+      color: #f0f;
+      margin-bottom: 0.8rem;
+      font-family: monospace;
+    }
+    .seccion p, .seccion li {
+      color: #e0e0ff;
+      font-family: monospace;
+      line-height: 1.4;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-family: monospace;
+    }
+    th, td {
+      border: 1px solid #0ff;
+      padding: 0.6rem;
+      text-align: center;
+      color: #0ff;
+    }
+    th {
+      background: rgba(0,255,255,0.2);
+      color: white;
+    }
+    .total td {
+      background: rgba(0,255,255,0.1);
+      font-weight: bold;
+    }
+    .destacado td {
+      background: rgba(0,255,0,0.1);
+      font-weight: bold;
+    }
+    .costo-total {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
+    .volver {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .btn-neon {
+      display: inline-block;
+      background: transparent;
+      border: 2px solid #0ff;
+      color: #0ff;
+      padding: 0.6rem 1.2rem;
+      text-decoration: none;
+      border-radius: 40px;
+      transition: 0.3s;
+    }
+    .btn-neon:hover {
+      background: #0ff;
+      color: #000;
+      box-shadow: 0 0 12px cyan;
+    }
+    @media (max-width: 700px) {
+      .resumen-card { padding: 1rem; }
+      th, td { padding: 0.3rem; font-size: 0.8rem; }
+      .seccion h3 { font-size: 1rem; }
+    }
+  </style>
+</BaseLayout>
