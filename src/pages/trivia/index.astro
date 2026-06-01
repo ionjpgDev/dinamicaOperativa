@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Trivia - Investigación Operativa">
+  <div class="trivia-card">
+    <h2>📋 TRIVIA TÉCNICA</h2>
+    <p class="subtitle">Responde las 5 preguntas</p>
+
+    <form id="triviaForm">
+      <!-- Pregunta 1 -->
+      <div class="question">
+        <p><strong>1.</strong> ¿Qué método de solución inicial del modelo de transporte suele dar la mejor aproximación al óptimo?</p>
+        <label><input type="radio" name="q1" value="A"> Método de la Esquina Noroeste</label>
+        <label><input type="radio" name="q1" value="B"> Método del Costo Mínimo</label>
+        <label><input type="radio" name="q1" value="C"> Método de Aproximación de Vogel (VAM)</label>
+        <label><input type="radio" name="q1" value="D"> Método de la Ruta Crítica</label>
+      </div>
+      <!-- Pregunta 2 -->
+      <div class="question">
+        <p><strong>2.</strong> En un problema de transporte balanceado, la suma de ofertas es __________ a la suma de demandas.</p>
+        <label><input type="radio" name="q2" value="A"> Mayor</label>
+        <label><input type="radio" name="q2" value="B"> Menor</label>
+        <label><input type="radio" name="q2" value="C"> Igual</label>
+        <label><input type="radio" name="q2" value="D"> No relacionada</label>
+      </div>
+      <!-- Pregunta 3 -->
+      <div class="question">
+        <p><strong>3.</strong> ¿Qué representa la variable "x_ij" en el modelo de transporte?</p>
+        <label><input type="radio" name="q3" value="A"> La latencia entre origen i y destino j</label>
+        <label><input type="radio" name="q3" value="B"> La cantidad enviada desde i hacia j</label>
+        <label><input type="radio" name="q3" value="C"> El costo unitario de transporte</label>
+        <label><input type="radio" name="q3" value="D"> La capacidad del servidor i</label>
+      </div>
+      <!-- Pregunta 4 -->
+      <div class="question">
+        <p><strong>4.</strong> ¿Cuál es el objetivo principal del modelo de transporte aplicado a servidores gaming?</p>
+        <label><input type="radio" name="q4" value="A"> Maximizar el número de jugadores</label>
+        <label><input type="radio" name="q4" value="B"> Minimizar la latencia total</label>
+        <label><input type="radio" name="q4" value="C"> Minimizar el costo de servidores</label>
+        <label><input type="radio" name="q4" value="D"> Maximizar el ancho de banda</label>
+      </div>
+      <!-- Pregunta 5 -->
+      <div class="question">
+        <p><strong>5.</strong> Con 3 orígenes y 4 destinos, ¿cuántas variables de decisión hay?</p>
+        <label><input type="radio" name="q5" value="A"> 7</label>
+        <label><input type="radio" name="q5" value="B"> 12</label>
+        <label><input type="radio" name="q5" value="C"> 8</label>
+        <label><input type="radio" name="q5" value="D"> 3</label>
+      </div>
+      <button type="button" id="calificarBtn">✅ CALIFICAR</button>
+      <div id="resultado" class="result-hidden"></div>
+    </form>
+
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="/dinamicaOperativa/" class="btn-neon">← VOLVER</a>
+    </div>
+  </div>
+
+  <style>
+    .trivia-card {
+      max-width: 700px;
+      margin: 0 auto;
+      background: rgba(10,20,30,0.75);
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 2rem;
+      border: 1px solid #0ff;
+    }
+    h2 { text-align: center; color: #0ff; font-family: monospace; }
+    .subtitle { text-align: center; color: #f0f; margin-bottom: 1.5rem; }
+    .question {
+      background: rgba(0,0,0,0.4);
+      border-left: 4px solid #0ff;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border-radius: 12px;
+    }
+    .question p { color: #e0e0ff; font-weight: bold; margin-bottom: 0.5rem; }
+    label { display: block; margin: 0.3rem 0; color: #0ff; cursor: pointer; }
+    input { margin-right: 0.5rem; }
+    button {
+      background: linear-gradient(135deg, #0ff, #0a8);
+      border: none;
+      width: 100%;
+      padding: 0.8rem;
+      font-family: monospace;
+      font-weight: bold;
+      border-radius: 40px;
+      cursor: pointer;
+    }
+    .result-hidden { display: none; margin-top: 1rem; padding: 1rem; border-radius: 12px; text-align: center; }
+    .result-success { display: block; background: rgba(0,255,0,0.2); border: 1px solid #0f0; color: #0f0; }
+    .result-error { display: block; background: rgba(255,0,0,0.2); border: 1px solid #f00; color: #f66; }
+    .btn-neon {
+      display: inline-block;
+      background: transparent;
+      border: 2px solid #0ff;
+      color: #0ff;
+      padding: 0.6rem 1.2rem;
+      text-decoration: none;
+      border-radius: 40px;
+    }
+    .btn-neon:hover { background: #0ff; color: #000; }
+  </style>
+
+  <script is:inline>
+    const btn = document.getElementById('calificarBtn');
+    const resultado = document.getElementById('resultado');
+    const correctas = { q1: 'C', q2: 'C', q3: 'B', q4: 'B', q5: 'B' };
+    
+    if (btn && resultado) {
+      btn.addEventListener('click', () => {
+        let aciertos = 0;
+        for (const [preg, resp] of Object.entries(correctas)) {
+          const selec = document.querySelector(`input[name="${preg}"]:checked`);
+          if (selec && selec.value === resp) aciertos++;
+        }
+        let mensaje = '';
+        if (aciertos === 5) mensaje = '🏆 ¡Excelente! Maestría en IO.';
+        else if (aciertos >= 3) mensaje = '✅ Buen trabajo. Revisa conceptos.';
+        else mensaje = '📚 Sigue practicando. Revisa el modelo de transporte.';
+        resultado.className = 'result-success';
+        resultado.innerHTML = `Aciertos: ${aciertos}/5. ${mensaje}`;
+      });
+    }
+  </script>
+</BaseLayout>

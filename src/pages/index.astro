@@ -1,219 +1,292 @@
 ---
-
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
-  </head>
-  <body>
-    <div class="game-container">
-      <div class="terminal-card">
-        <h2>📡 ACCESO AL SERVIDOR GAMING</h2>
-        <p class="subtitle">Proyecto INF-243 - Investigación Operativa</p>
+<BaseLayout title="Acceso al Servidor Gaming">
+  <div class="terminal-card">
+    <h2>📡 ACCESO AL SERVIDOR GAMING</h2>
+    <p class="subtitle">Proyecto INF-243 - Investigación Operativa</p>
 
-        <form id="registroForm" class="cyber-form">
-          <div class="input-group">
-            <label for="studentName">INGRESA TU NOMBRE:</label>
-            <input
-              type="text"
-              id="studentName"
-              name="nombre"
-              required
-            />
-          </div>
-          <button type="submit" id="btnConectar">CONECTAR AL SERVIDOR</button>
-        </form>
-
-        <div id="statusMessage" class="status-hidden"></div>
+    <form id="registroForm" class="cyber-form">
+      <div class="input-group">
+        <label for="studentName">INGRESA TU NOMBRE:</label>
+        <input type="text" id="studentName" name="nombre" required />
       </div>
+      <button type="submit" id="btnConectar">CONECTAR AL SERVIDOR</button>
+    </form>
+
+    <!-- Dos botones para las dinámicas -->
+    <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem;">
+      <a href="/dinamicaOperativa/trivia" class="btn-neon">📋 TRIVIA TÉCNICA</a>
+      <a href="/dinamicaOperativa/unir" class="btn-neon">🔗 UNIR CONCEPTOS</a>
     </div>
 
-    <script>
-      // REEMPLAZA ESTA URL CON LA QUE TE DIO GOOGLE APPS SCRIPT
-      const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjROaxyiTTd80VoLvfTEvZt6fsSIdJt9iZ-nQM6RI68VmWzFVx1Q86nNGVkCcKGvH2QA/exec";
+    <div id="statusMessage" class="status-hidden"></div>
+  </div>
 
-      const form = document.getElementById("registroForm") as HTMLFormElement;
-      const statusDiv = document.getElementById("statusMessage");
-      const btnSubmit = document.getElementById(
-        "btnConectar",
-      ) as HTMLButtonElement;
+  <style>
+    /* ===== ESTILOS DEL FORMULARIO RESPONSIVOS ===== */
+    .terminal-card {
+      max-width: 500px;
+      width: 100%;
+      margin: 0 auto;
+      background: rgba(10, 20, 30, 0.7);
+      backdrop-filter: blur(4px);
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid #0ff;
+      box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.3),
+        inset 0 0 10px rgba(0, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      overflow-x: hidden;
+    }
 
-      form?.addEventListener("submit", async (e) => {
+    h2 {
+      font-family: "Courier New", monospace;
+      font-size: 1.5rem;
+      text-align: center;
+      color: #0ff;
+      text-shadow:
+        0 0 5px #0ff,
+        0 0 10px #0ff;
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+      word-break: break-word;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #f0f;
+      font-size: 0.8rem;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cyber-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #0ff;
+      text-transform: uppercase;
+    }
+
+    input {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid #0ff;
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      color: #0ff;
+      font-family: monospace;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      border-color: #f0f;
+      box-shadow: 0 0 12px #f0f;
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    button {
+      background: linear-gradient(135deg, #0ff, #0a8);
+      border: none;
+      padding: 0.8rem;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #000;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 0 10px #0ff;
+      width: 100%;
+    }
+
+    button:hover {
+      transform: scale(1.02);
+      box-shadow:
+        0 0 20px #0ff,
+        0 0 30px #0ff;
+      background: #0ff;
+      color: #000;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      transform: none;
+      cursor: not-allowed;
+    }
+
+    /* Estilo para los botones de navegación */
+    .btn-neon {
+      display: block;
+      background: transparent;
+      border: 2px solid #0ff;
+      color: #0ff;
+      padding: 0.7rem;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 40px;
+      transition: 0.3s;
+      text-align: center;
+    }
+    .btn-neon:hover {
+      background: #0ff;
+      color: #000;
+      box-shadow: 0 0 20px #0ff;
+      transform: scale(1.02);
+    }
+
+    .status-hidden {
+      display: none;
+    }
+
+    .status-info,
+    .status-success,
+    .status-error {
+      margin-top: 1.5rem;
+      padding: 0.8rem;
+      border-radius: 8px;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.8rem;
+      animation: fadeIn 0.3s;
+      word-break: break-word;
+    }
+
+    .status-info {
+      background: rgba(0, 255, 255, 0.2);
+      border: 1px solid #0ff;
+      color: #0ff;
+    }
+
+    .status-success {
+      background: rgba(0, 255, 0, 0.2);
+      border: 1px solid #0f0;
+      color: #0f0;
+      text-shadow: 0 0 2px #0f0;
+    }
+
+    .status-error {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid #f00;
+      color: #f66;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* RESPONSIVIDAD */
+    @media (max-width: 600px) {
+      .terminal-card {
+        padding: 1.2rem;
+      }
+      h2 {
+        font-size: 1.2rem;
+      }
+      .subtitle {
+        font-size: 0.7rem;
+        margin-bottom: 1.5rem;
+      }
+      button {
+        font-size: 0.8rem;
+        padding: 0.7rem;
+      }
+      input {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .terminal-card {
+        padding: 1rem;
+      }
+      h2 {
+        font-size: 1rem;
+      }
+      .cyber-form {
+        gap: 1rem;
+      }
+    }
+  </style>
+
+  <script is:inline>
+    const GOOGLE_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbzjROaxyiTTd80VoLvfTEvZt6fsSIdJt9iZ-nQM6RI68VmWzFVx1Q86nNGVkCcKGvH2QA/exec";
+
+    const form = document.getElementById("registroForm");
+    const statusDiv = document.getElementById("statusMessage");
+    const btnSubmit = document.getElementById("btnConectar");
+
+    if (form && btnSubmit && statusDiv) {
+      form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const formData = new FormData(form);
-        const nombreInput = formData.get("nombre") as string;
+        const nombreInput = formData.get("nombre");
 
-        // Deshabilitar botón para evitar doble envío
         btnSubmit.disabled = true;
-        btnSubmit.innerText = "CONTROLANDO LATENCIA... ⏳";
+        btnSubmit.innerText = "MIDIENDO LATENCIA... ⏳";
 
-        if (statusDiv) {
-          statusDiv.className = "status-info";
-          statusDiv.innerText = "Enviando paquetes de datos al servidor...";
-        }
+        statusDiv.className = "status-info";
+        statusDiv.innerText = "Calculando RTT...";
+        statusDiv.style.display = "block";
+
+        const startTime = performance.now();
 
         try {
-          const response = await fetch(GOOGLE_SCRIPT_URL, {
+          await fetch(GOOGLE_SCRIPT_URL, {
             method: "POST",
-            mode: "no-cors", // Evita problemas de CORS con Google Apps Script
-            headers: {
-              "Content-Type": "application/json",
-            },
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ nombre: nombreInput }),
           });
 
-          // Nota: Con 'no-cors', la respuesta vuelve opaca (status 0),
-          // pero si llegó aquí sin lanzar error, los datos se guardaron con éxito en Google Sheets.
-          if (statusDiv) {
-            statusDiv.className = "status-success";
-            statusDiv.innerText = `¡Conexión establecida! Bienvenido al servidor, ${nombreInput}. 🚀 Latencia: 15ms`;
-          }
+          const rtt = Math.round(performance.now() - startTime);
+
+          statusDiv.className = "status-success";
+          statusDiv.innerHTML = `¡Hola, ${nombreInput}! Tu latencia es de ${rtt} ms. 🚀`;
+
           form.reset();
         } catch (error) {
           console.error(error);
-          if (statusDiv) {
-            statusDiv.className = "status-error";
-            statusDiv.innerText =
-              "Error de red: Caída de paquetes en el servidor.";
-          }
+          statusDiv.className = "status-error";
+          statusDiv.innerHTML = "Error al medir la latencia. Intenta de nuevo.";
         } finally {
           btnSubmit.disabled = false;
           btnSubmit.innerText = "CONECTAR AL SERVIDOR";
         }
       });
-    </script>
-
-    <style>
-      /* Estilos con temática Gaming Oscura / Cyberpunk */
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background-color: #0d1117;
-        font-family: "Courier New", Courier, monospace;
-        color: #c9d1d9;
-        padding: 20px;
-      }
-
-      .terminal-card {
-        background-color: #161b22;
-        border: 2px solid #58a6ff;
-        box-shadow: 0 0 15px rgba(88, 166, 255, 0.3);
-        padding: 30px;
-        border-radius: 8px;
-        max-width: 450px;
-        width: 100%;
-        text-align: center;
-      }
-
-      h2 {
-        color: #58a6ff;
-        margin-bottom: 5px;
-        letter-spacing: 1px;
-      }
-
-      .subtitle {
-        color: #8b949e;
-        font-size: 0.9rem;
-        margin-bottom: 25px;
-      }
-
-      .cyber-form {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .input-group {
-        text-align: left;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      label {
-        font-size: 0.85rem;
-        color: #58a6ff;
-        font-weight: bold;
-      }
-
-      input {
-        background-color: #0d1117;
-        border: 1px solid #30363d;
-        color: #f0f6fc;
-        padding: 12px;
-        border-radius: 6px;
-        font-size: 1rem;
-        outline: none;
-        transition: border 0.2s;
-      }
-
-      input:focus {
-        border-color: #58a6ff;
-        box-shadow: 0 0 5px rgba(88, 166, 255, 0.5);
-      }
-
-      button {
-        background-color: #238636;
-        color: #ffffff;
-        border: none;
-        padding: 14px;
-        font-size: 1rem;
-        font-weight: bold;
-        border-radius: 6px;
-        cursor: pointer;
-        letter-spacing: 1px;
-        transition: background-color 0.2s;
-      }
-
-      button:hover:not(:disabled) {
-        background-color: #2ea043;
-        box-shadow: 0 0 10px rgba(46, 160, 67, 0.5);
-      }
-
-      button:disabled {
-        background-color: #213527;
-        color: #8b949e;
-        cursor: not-allowed;
-      }
-
-      /* Estados de mensajes */
-      .status-hidden {
-        display: none;
-      }
-
-      .status-info,
-      .status-success,
-      .status-error {
-        margin-top: 20px;
-        padding: 10px;
-        border-radius: 4px;
-        font-size: 0.9rem;
-      }
-
-      .status-info {
-        background-color: rgba(56, 139, 253, 0.15);
-        color: #58a6ff;
-        border: 1px solid #388bfd;
-      }
-      .status-success {
-        background-color: rgba(46, 160, 67, 0.15);
-        color: #3fb950;
-        border: 1px solid #238636;
-      }
-      .status-error {
-        background-color: rgba(248, 81, 73, 0.15);
-        color: #f85149;
-        border: 1px solid #f85149;
-      }
-    </style>
-  </body>
-</html>
+    }
+  </script>
+</BaseLayout>

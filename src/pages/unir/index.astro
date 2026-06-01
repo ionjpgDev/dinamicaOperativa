@@ -1,0 +1,324 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Unir Conceptos - Flechas Visuales">
+  <div class="match-card">
+    <h2>🔗 UNIR CONCEPTOS</h2>
+    <p class="subtitle">Haz clic en un término y luego en su definición correcta</p>
+
+    <div class="game-area">
+      <div class="column">
+        <h3>TÉRMINOS (fijos)</h3>
+        <div id="termsList" class="list"></div>
+      </div>
+      <div class="column">
+        <h3>DEFINICIONES (se mezclan al reiniciar)</h3>
+        <div id="defsList" class="list"></div>
+      </div>
+    </div>
+
+    <div class="connections-panel">
+      <h4>📌 Conexiones realizadas:</h4>
+      <ul id="connectionsList"></ul>
+    </div>
+
+    <button id="reiniciarBtn" class="reset-btn">🔄 REINICIAR Y MEZCLAR</button>
+    <div id="mensaje" class="message-hidden"></div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="/dinamicaOperativa/" class="btn-neon">← VOLVER</a>
+    </div>
+  </div>
+
+  <style>
+    .match-card {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: rgba(10,20,30,0.75);
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 2rem;
+      border: 1px solid #0ff;
+    }
+    h2 { text-align: center; color: #0ff; font-family: monospace; }
+    .subtitle { text-align: center; color: #f0f; margin-bottom: 2rem; }
+    .game-area {
+      display: flex;
+      gap: 2rem;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .column {
+      flex: 1;
+      min-width: 280px;
+    }
+    .column h3 { text-align: center; color: #f0f; margin-bottom: 1rem; }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .term-item, .def-item {
+      background: rgba(0,0,0,0.6);
+      border: 2px solid #0ff;
+      border-radius: 12px;
+      padding: 0.8rem;
+      cursor: pointer;
+      text-align: center;
+      color: #0ff;
+      font-family: monospace;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    /* Estado seleccionado */
+    .term-item.selected, .def-item.selected {
+      background: #0ff !important;
+      color: #000 !important;
+      box-shadow: 0 0 15px #0ff;
+      transform: scale(1.02);
+      border-color: #fff;
+    }
+    /* Estado emparejado (match) */
+    .term-item.matched, .def-item.matched {
+      background: rgba(0,255,0,0.2);
+      border-color: #0f0;
+      color: #0f0;
+      text-decoration: line-through;
+      cursor: default;
+      pointer-events: none;
+      opacity: 0.7;
+      filter: drop-shadow(0 0 4px #0f0);
+    }
+    .connections-panel {
+      margin-top: 2rem;
+      background: rgba(0,0,0,0.5);
+      border-radius: 16px;
+      padding: 1rem;
+      border: 1px solid #0ff;
+    }
+    .connections-panel h4 {
+      color: #0ff;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    #connectionsList {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.8rem;
+    }
+    #connectionsList li {
+      background: rgba(0,255,255,0.2);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      color: #0ff;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+    .reset-btn {
+      display: block;
+      margin: 2rem auto 0;
+      background: linear-gradient(135deg, #0ff, #0a8);
+      border: none;
+      padding: 0.6rem 1.5rem;
+      font-family: monospace;
+      font-weight: bold;
+      border-radius: 40px;
+      cursor: pointer;
+      color: #000;
+      font-size: 1rem;
+    }
+    .reset-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 15px #0ff;
+    }
+    .message-hidden { display: none; margin-top: 1rem; text-align: center; padding: 1rem; border-radius: 12px; }
+    .message-success { display: block; background: rgba(0,255,0,0.2); border: 1px solid #0f0; color: #0f0; }
+    .message-error { display: block; background: rgba(255,0,0,0.2); border: 1px solid #f00; color: #f66; }
+    .btn-neon {
+      display: inline-block;
+      background: transparent;
+      border: 2px solid #0ff;
+      color: #0ff;
+      padding: 0.6rem 1.2rem;
+      text-decoration: none;
+      border-radius: 40px;
+    }
+    .btn-neon:hover { background: #0ff; color: #000; }
+    @media (max-width: 700px) {
+      .game-area { flex-direction: column; }
+    }
+  </style>
+
+  <script is:inline>
+    // Conceptos: índice i relaciona término i con definición i (la definición correcta es la del mismo índice)
+    const conceptos = [
+      { term: "Modelo de Transporte", def: "Técnica para distribuir recursos minimizando costo o tiempo." },
+      { term: "Método de Vogel (VAM)", def: "Usa penalizaciones para solución inicial cercana al óptimo." },
+      { term: "Problema balanceado", def: "Oferta total = Demanda total." },
+      { term: "Variables de decisión", def: "Cantidades enviadas desde cada origen a cada destino." },
+      { term: "Función objetivo", def: "Minimizar latencia total en servidores gaming." },
+      { term: "Latencia (RTT)", def: "Tiempo de ida y vuelta entre usuario y servidor." }
+    ];
+
+    let termMatched = new Array(conceptos.length).fill(false);   // términos ya emparejados
+    let defMatched = new Array(conceptos.length).fill(false);    // definiciones ya emparejadas
+    let selectedTerm = null;      // índice del término seleccionado actualmente
+    let currentDefOrder = [];      // orden actual de las definiciones (índices)
+    let connections = [];          // { termIdx, defIdx }
+
+    // Elementos DOM
+    const termsDiv = document.getElementById('termsList');
+    const defsDiv = document.getElementById('defsList');
+    const resetBtn = document.getElementById('reiniciarBtn');
+    const msgDiv = document.getElementById('mensaje');
+    const connectionsList = document.getElementById('connectionsList');
+
+    // Función para mezclar un array
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Reiniciar el juego: limpiar estados, mezclar definiciones
+    function resetGame() {
+      termMatched.fill(false);
+      defMatched.fill(false);
+      selectedTerm = null;
+      connections = [];
+      // Crear un nuevo orden aleatorio para las definiciones (índices 0..n-1)
+      currentDefOrder = [...Array(conceptos.length).keys()];
+      currentDefOrder = shuffleArray(currentDefOrder);
+      // Limpiar mensaje
+      if (msgDiv) msgDiv.className = 'message-hidden';
+      // Renderizar todo
+      render();
+    }
+
+    // Renderizar términos y definiciones según estado actual
+    function render() {
+      if (!termsDiv || !defsDiv) return;
+
+      // Renderizar términos (siempre en orden original)
+      termsDiv.innerHTML = '';
+      conceptos.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'term-item';
+        if (termMatched[idx]) div.classList.add('matched');
+        if (selectedTerm === idx) div.classList.add('selected');
+        div.textContent = item.term;
+        if (!termMatched[idx]) {
+          div.addEventListener('click', () => onTermClick(idx));
+        }
+        termsDiv.appendChild(div);
+      });
+
+      // Renderizar definiciones en el orden actual (currentDefOrder)
+      defsDiv.innerHTML = '';
+      currentDefOrder.forEach(defOriginalIdx => {
+        const defItem = conceptos[defOriginalIdx];
+        const div = document.createElement('div');
+        div.className = 'def-item';
+        if (defMatched[defOriginalIdx]) div.classList.add('matched');
+        div.textContent = defItem.def;
+        if (!defMatched[defOriginalIdx]) {
+          div.addEventListener('click', () => onDefClick(defOriginalIdx));
+        }
+        defsDiv.appendChild(div);
+      });
+
+      // Actualizar panel de conexiones
+      if (connectionsList) {
+        connectionsList.innerHTML = '';
+        connections.forEach(conn => {
+          const li = document.createElement('li');
+          li.textContent = `${conceptos[conn.termIdx].term} ➜ ${conceptos[conn.defIdx].def.substring(0, 45)}...`;
+          connectionsList.appendChild(li);
+        });
+      }
+    }
+
+    // Manejar clic en un término
+    function onTermClick(idx) {
+      if (termMatched[idx]) return; // ya emparejado
+      // Si hay otro término seleccionado, lo desseleccionamos
+      if (selectedTerm !== null) {
+        // Desseleccionar el anterior y seleccionar el nuevo
+        selectedTerm = idx;
+      } else {
+        selectedTerm = idx;
+      }
+      render();
+    }
+
+    // Manejar clic en una definición
+    function onDefClick(defOriginalIdx) {
+      if (defMatched[defOriginalIdx]) return; // ya emparejada
+
+      if (selectedTerm === null) {
+        // No hay término seleccionado
+        if (msgDiv) {
+          msgDiv.className = 'message-error';
+          msgDiv.textContent = '❌ Primero selecciona un término.';
+          setTimeout(() => {
+            if (msgDiv.classList.contains('message-error')) msgDiv.className = 'message-hidden';
+          }, 1500);
+        }
+        return;
+      }
+
+      const termIdx = selectedTerm;
+      // Verificar si el término seleccionado coincide con la definición (mismo índice original)
+      if (termIdx === defOriginalIdx) {
+        // Conexión correcta
+        termMatched[termIdx] = true;
+        defMatched[defOriginalIdx] = true;
+        connections.push({ termIdx, defIdx: defOriginalIdx });
+        selectedTerm = null; // limpiar selección
+        render();
+
+        // Verificar si se completó todo
+        if (connections.length === conceptos.length) {
+          if (msgDiv) {
+            msgDiv.className = 'message-success';
+            msgDiv.textContent = '🎉 ¡Felicidades! Has unido todos los conceptos correctamente. 🎉';
+          }
+        } else {
+          if (msgDiv) {
+            msgDiv.className = 'message-success';
+            msgDiv.textContent = '✅ ¡Correcto! Sigue así.';
+            setTimeout(() => {
+              if (msgDiv.classList.contains('message-success')) msgDiv.className = 'message-hidden';
+            }, 1000);
+          }
+        }
+      } else {
+        // Conexión incorrecta
+        if (msgDiv) {
+          msgDiv.className = 'message-error';
+          msgDiv.textContent = `❌ "${conceptos[termIdx].term}" no se relaciona con esa definición.`;
+          setTimeout(() => {
+            if (msgDiv.classList.contains('message-error')) msgDiv.className = 'message-hidden';
+          }, 1500);
+        }
+        // Limpiar selección y volver a renderizar (para quitar el resaltado)
+        selectedTerm = null;
+        render();
+      }
+    }
+
+    // Evento del botón reiniciar
+    if (resetBtn) {
+      resetBtn.addEventListener('click', resetGame);
+    }
+
+    // Inicializar juego
+    resetGame();
+  </script>
+</BaseLayout>
