@@ -3,15 +3,217 @@
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+  </head>
+  <body>
+    <div class="game-container">
+      <div class="terminal-card">
+        <h2>📡 ACCESO AL SERVIDOR GAMING</h2>
+        <p class="subtitle">Proyecto INF-243 - Investigación Operativa</p>
+
+        <form id="registroForm" class="cyber-form">
+          <div class="input-group">
+            <label for="studentName">INGRESA TU NOMBRE:</label>
+            <input
+              type="text"
+              id="studentName"
+              name="nombre"
+              required
+            />
+          </div>
+          <button type="submit" id="btnConectar">CONECTAR AL SERVIDOR</button>
+        </form>
+
+        <div id="statusMessage" class="status-hidden"></div>
+      </div>
+    </div>
+
+    <script>
+      // REEMPLAZA ESTA URL CON LA QUE TE DIO GOOGLE APPS SCRIPT
+      const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjROaxyiTTd80VoLvfTEvZt6fsSIdJt9iZ-nQM6RI68VmWzFVx1Q86nNGVkCcKGvH2QA/exec";
+
+      const form = document.getElementById("registroForm") as HTMLFormElement;
+      const statusDiv = document.getElementById("statusMessage");
+      const btnSubmit = document.getElementById(
+        "btnConectar",
+      ) as HTMLButtonElement;
+
+      form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const nombreInput = formData.get("nombre") as string;
+
+        // Deshabilitar botón para evitar doble envío
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "CONTROLANDO LATENCIA... ⏳";
+
+        if (statusDiv) {
+          statusDiv.className = "status-info";
+          statusDiv.innerText = "Enviando paquetes de datos al servidor...";
+        }
+
+        try {
+          const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors", // Evita problemas de CORS con Google Apps Script
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ nombre: nombreInput }),
+          });
+
+          // Nota: Con 'no-cors', la respuesta vuelve opaca (status 0),
+          // pero si llegó aquí sin lanzar error, los datos se guardaron con éxito en Google Sheets.
+          if (statusDiv) {
+            statusDiv.className = "status-success";
+            statusDiv.innerText = `¡Conexión establecida! Bienvenido al servidor, ${nombreInput}. 🚀 Latencia: 15ms`;
+          }
+          form.reset();
+        } catch (error) {
+          console.error(error);
+          if (statusDiv) {
+            statusDiv.className = "status-error";
+            statusDiv.innerText =
+              "Error de red: Caída de paquetes en el servidor.";
+          }
+        } finally {
+          btnSubmit.disabled = false;
+          btnSubmit.innerText = "CONECTAR AL SERVIDOR";
+        }
+      });
+    </script>
+
+    <style>
+      /* Estilos con temática Gaming Oscura / Cyberpunk */
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #0d1117;
+        font-family: "Courier New", Courier, monospace;
+        color: #c9d1d9;
+        padding: 20px;
+      }
+
+      .terminal-card {
+        background-color: #161b22;
+        border: 2px solid #58a6ff;
+        box-shadow: 0 0 15px rgba(88, 166, 255, 0.3);
+        padding: 30px;
+        border-radius: 8px;
+        max-width: 450px;
+        width: 100%;
+        text-align: center;
+      }
+
+      h2 {
+        color: #58a6ff;
+        margin-bottom: 5px;
+        letter-spacing: 1px;
+      }
+
+      .subtitle {
+        color: #8b949e;
+        font-size: 0.9rem;
+        margin-bottom: 25px;
+      }
+
+      .cyber-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .input-group {
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      label {
+        font-size: 0.85rem;
+        color: #58a6ff;
+        font-weight: bold;
+      }
+
+      input {
+        background-color: #0d1117;
+        border: 1px solid #30363d;
+        color: #f0f6fc;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 1rem;
+        outline: none;
+        transition: border 0.2s;
+      }
+
+      input:focus {
+        border-color: #58a6ff;
+        box-shadow: 0 0 5px rgba(88, 166, 255, 0.5);
+      }
+
+      button {
+        background-color: #238636;
+        color: #ffffff;
+        border: none;
+        padding: 14px;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        letter-spacing: 1px;
+        transition: background-color 0.2s;
+      }
+
+      button:hover:not(:disabled) {
+        background-color: #2ea043;
+        box-shadow: 0 0 10px rgba(46, 160, 67, 0.5);
+      }
+
+      button:disabled {
+        background-color: #213527;
+        color: #8b949e;
+        cursor: not-allowed;
+      }
+
+      /* Estados de mensajes */
+      .status-hidden {
+        display: none;
+      }
+
+      .status-info,
+      .status-success,
+      .status-error {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+
+      .status-info {
+        background-color: rgba(56, 139, 253, 0.15);
+        color: #58a6ff;
+        border: 1px solid #388bfd;
+      }
+      .status-success {
+        background-color: rgba(46, 160, 67, 0.15);
+        color: #3fb950;
+        border: 1px solid #238636;
+      }
+      .status-error {
+        background-color: rgba(248, 81, 73, 0.15);
+        color: #f85149;
+        border: 1px solid #f85149;
+      }
+    </style>
+  </body>
 </html>
